@@ -3,11 +3,12 @@
 import axios from 'axios'
 import { ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
 
 import { lineItemsType } from '@/api/create-session'
+import { CreateSessionResponse } from '@/app/api/create-session/route'
 import { env } from '@/env'
 import { cn, formatProductPrice } from '@/lib/utils'
 
@@ -30,8 +31,9 @@ export interface ProductCartItem {
 }
 
 export function Cart() {
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const { cartDetails, cartCount, totalPrice, removeItem } = useShoppingCart()
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const pathname = usePathname()
   const navigate = useRouter()
 
   const cartItems: ProductCartItem[] = Object.entries(cartDetails ?? {}).map(
@@ -54,10 +56,11 @@ export function Cart() {
     },
   )
 
+  const isSuccessPage = pathname.includes('success')
   const isCartEmpty = cartItems.length === 0
 
   const handleCheckout = async () => {
-    const { data } = await axios.post(
+    const { data } = await axios.post<CreateSessionResponse>(
       `${env.NEXT_PUBLIC_URL}/api/create-session`,
       {
         lineItems: cartLineItems,
@@ -79,7 +82,7 @@ export function Cart() {
           data-items-count={cartCount}
           className={cn(
             'relative aspect-square h-auto p-4 after:absolute after:right-0 after:top-0 after:flex after:size-8 after:-translate-y-1/4 after:translate-x-1/4 after:items-center after:justify-center after:rounded-full after:border-[3px] after:border-solid after:border-background after:bg-primary after:text-sm after:font-bold after:content-[attr(data-items-count)]',
-            { 'after:hidden': cartCount === 0 },
+            { 'after:hidden': cartCount === 0, hidden: isSuccessPage },
           )}
         >
           <ShoppingBag />

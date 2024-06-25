@@ -13,7 +13,7 @@ export interface CreateSessionParams {
 export async function createSession({ items }: CreateSessionParams) {
   const session = stripe.checkout.sessions.create({
     success_url: `${env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${env.NEXT_PUBLIC_URL}/cancel`,
+    cancel_url: `${env.NEXT_PUBLIC_URL}`,
     mode: 'payment',
     line_items: items,
   })
