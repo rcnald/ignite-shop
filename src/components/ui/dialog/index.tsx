@@ -117,7 +117,7 @@ export {
   DialogHeader,
   DialogOverlay,
   DialogPortal,
+  DialogPrimitive,
   DialogTitle,
-  // eslint-disable-next-line prettier/prettier
-  DialogTrigger
+  DialogTrigger,
 }
